@@ -6,7 +6,6 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h> // For close()
-#define PORT 4455
 
 int main(int argc, char *argv[])
 {
@@ -19,9 +18,16 @@ int main(int argc, char *argv[])
     serverSocket = socket(PF_INET, SOCK_STREAM, 0); // SOCK_STREAM defines TCP communication
     printf("[+]Server socket created successfully.\n");
 
-    memset(&serverAddr, '\0', sizeof(serverAddr));       // Initialize the server address structure
-    serverAddr.sin_family = AF_INET;                     // IPv4 address family
-    serverAddr.sin_port = htons(PORT);                   // Set the port number (convert to network byte order)
+    memset(&serverAddr, '\0', sizeof(serverAddr)); // Initialize the server address structure
+    serverAddr.sin_family = AF_INET;               // IPv4 address family
+
+    if (argc != 2)
+    {
+        printf("Usage: %s <port>\n", argv[0]);
+        return 1;
+    }
+
+    int PORT = atoi(argv[1]);                            // Set the port number (convert to network byte order)
     serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1"); // Set the server IP address (localhost in this case)
 
     bind(serverSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)); // Bind the socket to the specified IP and port
